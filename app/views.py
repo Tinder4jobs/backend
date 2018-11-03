@@ -25,7 +25,10 @@ def login():
 
 @app.route('/question/<token>', methods=('GET',))
 def get_question(token: str) -> str:
-    return stuff2str(db.get_question(db.get_user_from_token(token)))
+    q = db.get_question(db.get_user_from_token(token))
+    if q:
+        return stuff2str(q)
+    raise('No more questions')
 
 
 @app.route('/reply/<token>', methods=('POST',))
