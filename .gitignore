@@ -103,3 +103,4 @@ venv.bak/
 # mypy
 .mypy_cache/
 tinder4jobs.kdev4
+db
