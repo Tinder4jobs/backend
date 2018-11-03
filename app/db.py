@@ -19,6 +19,28 @@ conn = sqlite3.connect('db')
 
 def create():
     cursor = conn.cursor()
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users
+        (
+            id INTEGER PRIMARY KEY,
+            username TEXT UNIQUE
+        )
+    ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS companies
+        (
+            id INTEGER PRIMARY KEY,
+            username TEXT UNIQUE
+        )
+    ''')
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS companies_replies
+        (
+            cid INTEGER,
+            qid INTEGER,
+            reply INTEGER
+        )
+    ''')
     cursor.execute(
         '''CREATE TABLE IF NOT EXISTS questions
             (
