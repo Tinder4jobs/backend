@@ -10,12 +10,21 @@ class Question(NamedTuple):
     category_id: int
     image: str
 
+
 class Response(NamedTuple):
     id: int
     response: bool
     relevance: float
 
+
+class User(NamedTuple):
+    id: int
+    username: str
+
+
 conn = sqlite3.connect('db')
+sessions = {}
+
 
 def create():
     cursor = conn.cursor()
@@ -70,8 +79,25 @@ def create():
     cursor.close()
 
 
+def login(username: str, password: str) -> Optional[str]:
+    '''
+    Returns a session token for a login
+    '''
+    cursor = conn.cursor()
+    u = cursor.execute('''
+        SELECT * FROM users WHERE username = ?
+    ''', (username, )).fetchone()
+    if u:
+        user = User(u)
+        token
+        sessions[token] = user.id
+        return token
+    return None
+
+
 def get_user_from_token(token: str) -> int:
-    return 12
+    return sessions[token]
+
 
 def get_question(user_id: int) -> Optional[Question]:
     """
@@ -90,6 +116,7 @@ def get_question(user_id: int) -> Optional[Question]:
     if q:
         return Response(q)
     return q
+
 
 def save_response(user_id: int, response: Response) -> None:
     cursor = conn.cursor()

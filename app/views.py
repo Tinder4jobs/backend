@@ -7,8 +7,6 @@ from flask import request
 
 from app import app, db
 
-data = {}
-screen_mapping = {}
 
 @app.route('/')
 def index() -> str:
@@ -17,10 +15,10 @@ def index() -> str:
 
 @app.route('/login', methods=('POST',))
 def login():
-    """
-    """
-    return 'secretTokenXxXxxX'
-    pass #TODO
+    token = db.login(**json.load(request.stream))
+    if token:
+        return token
+    raise('Invalid login')
 
 
 @app.route('/question/<token>', methods=('GET',))
