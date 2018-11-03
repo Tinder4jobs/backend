@@ -101,7 +101,7 @@ def get_user_from_token(token: str) -> int:
     return sessions[token]
 
 
-def get_question(user_id: int) -> Optional[Question]:
+def get_question(user_id: int) -> List[Question]:
     """
     Returns a question that the user has not answered to
     """
@@ -113,12 +113,10 @@ def get_question(user_id: int) -> Optional[Question]:
         WHERE questions.id NOT IN (
             SELECT qid FROM seekers_replies WHERE uid = ?
         )
-        LIMIT 1
-    ''', (user_id,)).fetchone()
+        LIMIT 10
+    ''', (user_id,)).fetchall()
     cursor.close()
-    if q:
-        return Question(*q)
-    return q
+    return [Question(*i) for i in q]
 
 
 def save_response(user_id: int, response: Response) -> None:
