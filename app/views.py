@@ -27,6 +27,12 @@ def get_question(token: str) -> str:
     return stuff2str(q)
 
 
+@app.route('/clear', methods=('POST',))
+def clear():
+    db.clear()
+    return ''
+
+
 @app.route('/response/<token>', methods=('POST',))
 def set_question(token: str) -> str:
     response = load(json.load(request.stream), db.Response)

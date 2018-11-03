@@ -119,6 +119,13 @@ def get_question(user_id: int) -> List[Question]:
     return [Question(*i) for i in q]
 
 
+def clear() -> None:
+    conn = sqlite3.connect('db')
+    cursor = conn.cursor()
+    cursor.execute('DELETE FROM seekers_replies')
+    conn.commit()
+    cursor.close()
+
 def save_response(user_id: int, response: Response) -> None:
     conn = sqlite3.connect('db')
     cursor = conn.cursor()
