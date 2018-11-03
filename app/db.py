@@ -22,11 +22,11 @@ class User(NamedTuple):
     username: str
 
 
-conn = sqlite3.connect('db')
 sessions = {}
 
 
 def create():
+    conn = sqlite3.connect('db')
     cursor = conn.cursor()
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users
@@ -83,6 +83,7 @@ def login(username: str, password: str) -> Optional[str]:
     '''
     Returns a session token for a login
     '''
+    conn = sqlite3.connect('db')
     cursor = conn.cursor()
     u = cursor.execute('''
         SELECT * FROM users WHERE username = ?
@@ -104,6 +105,7 @@ def get_question(user_id: int) -> Optional[Question]:
     """
     Returns a question that the user has not answered to
     """
+    conn = sqlite3.connect('db')
     cursor = conn.cursor()
     q = cursor.execute('''
         SELECT *
@@ -115,11 +117,12 @@ def get_question(user_id: int) -> Optional[Question]:
     ''', (user_id,)).fetchone()
     cursor.close()
     if q:
-        return Response(q)
+        return Question(*q)
     return q
 
 
 def save_response(user_id: int, response: Response) -> None:
+    conn = sqlite3.connect('db')
     cursor = conn.cursor()
     cursor.execute('''
         INSERT INTO seekers_replies
