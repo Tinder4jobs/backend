@@ -39,6 +39,11 @@ def set_question(token: str) -> str:
     db.save_response(db.get_user_from_token(token), response)
     return ''
 
+@app.route('/matches/<token>', methods=('GET',))
+def best_matches(token: str) -> str:
+    q = db.get_matches(db.get_user_from_token(token))
+    return stuff2str(q)
+
 
 def stuff2str(stuff: Any):
     return json.dumps(dump(stuff))

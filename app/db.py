@@ -22,6 +22,13 @@ class User(NamedTuple):
     username: str
 
 
+class Company(NamedTuple):
+    id: int
+    username: str
+    image: str
+    description: str
+
+
 sessions = {}
 
 
@@ -39,7 +46,9 @@ def create():
         CREATE TABLE IF NOT EXISTS companies
         (
             id INTEGER PRIMARY KEY,
-            username TEXT UNIQUE
+            username TEXT UNIQUE,
+            image TEXT,
+            description TEXT
         )
     ''')
     cursor.execute('''
@@ -126,6 +135,7 @@ def clear() -> None:
     conn.commit()
     cursor.close()
 
+
 def save_response(user_id: int, response: Response) -> None:
     conn = sqlite3.connect('db')
     cursor = conn.cursor()
@@ -135,3 +145,31 @@ def save_response(user_id: int, response: Response) -> None:
     ''', (user_id, ) + tuple(response))
     conn.commit()
     cursor.close()
+
+
+def get_matches(user_id: str) -> List[Company]:
+    conn = sqlite3.connect('db')
+    cursor = conn.cursor()
+
+    c = cursor.execute('''
+        SELECT id, username, image, description
+        FROM companies, (
+            SELECT cid, sum(q) as compatibility
+            FROM (
+                SELECT *,
+                (
+                    relevance * (CASE (companies_replies.reply = seekers_replies.reply) WHEN 1 THEN 1 WHEN 0 THEN -1 END)
+                ) AS q
+                FROM seekers_replies, companies_replies
+                WHERE seekers_replies.qid = companies_replies.qid AND seekers_replies.uid = ?
+            )
+            GROUP BY cid
+            ORDER BY compatibility DESC
+        )
+        WHERE id=cid
+        LIMIT 10
+        ;
+    ''', (user_id,)).fetchall()
+    cursor.close()
+    print(c)
+    return [Company(*i) for i in c]
