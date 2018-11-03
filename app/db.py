@@ -45,6 +45,7 @@ class Company(NamedTuple):
     username: str
     image: str
     description: str
+    location: str
 
 
 sessions = {}
@@ -66,7 +67,8 @@ def create():
             id INTEGER PRIMARY KEY,
             username TEXT UNIQUE,
             image TEXT,
-            description TEXT
+            description TEXT,
+            location TEXT
         )
     ''')
     cursor.execute('''
@@ -170,7 +172,7 @@ def get_matches(user_id: str) -> List[Company]:
     cursor = conn.cursor()
 
     c = cursor.execute('''
-        SELECT id, username, image, description
+        SELECT id, username, image, description, location
         FROM companies, (
             SELECT cid, sum(q) as compatibility
             FROM (
