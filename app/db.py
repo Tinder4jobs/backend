@@ -107,6 +107,7 @@ def get_question(user_id: int) -> Optional[Question]:
     """
     conn = sqlite3.connect('db')
     cursor = conn.cursor()
+    print(user_id)
     q = cursor.execute('''
         SELECT *
         FROM questions
@@ -128,4 +129,5 @@ def save_response(user_id: int, response: Response) -> None:
         INSERT INTO seekers_replies
         VALUES (?, ?, ?, ?)
     ''', (user_id, ) + tuple(response))
+    conn.commit()
     cursor.close()
