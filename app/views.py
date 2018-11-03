@@ -29,7 +29,7 @@ def get_question(token: str) -> str:
     raise('No more questions')
 
 
-@app.route('/reply/<token>', methods=('POST',))
+@app.route('/response/<token>', methods=('POST',))
 def set_question(token: str) -> str:
     response = load(json.load(request.stream), db.Response)
     db.save_response(db.get_user_from_token(token), response)

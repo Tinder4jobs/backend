@@ -107,7 +107,6 @@ def get_question(user_id: int) -> Optional[Question]:
     """
     conn = sqlite3.connect('db')
     cursor = conn.cursor()
-    print(user_id)
     q = cursor.execute('''
         SELECT *
         FROM questions
